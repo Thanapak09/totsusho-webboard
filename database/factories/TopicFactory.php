@@ -23,6 +23,7 @@ class TopicFactory extends Factory
             'title' => $this->faker->sentence,
             'content' => $this->faker->paragraph,
             'created_by' => 'anonymous',
+            'user_id' => null,
         ];
     }
 }

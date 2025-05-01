@@ -24,6 +24,7 @@ class CommentFactory extends Factory
             'topic_id'  => Topic::factory(),
             'content' => $this->faker->sentence,
             'comment_by' => 'anonymous',
+            'user_id' => null,
         ];
     }
 }

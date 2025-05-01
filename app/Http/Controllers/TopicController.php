@@ -34,7 +34,8 @@ class TopicController extends Controller
         $topic = Topic::create([
             'title' => $request->title,
             'content' => $request->content,
-            'created_by' => $request->input('created_by', 'anonymous'),
+            'user_id' => auth()->id(),
+            'created_by' => auth()->check() ? auth()->user()->name : 'anonymous',
         ]);
 
         Log::info('Topic created', ['title' => $topic->title, 'by' => $topic->created_by]);

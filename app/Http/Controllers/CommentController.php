@@ -19,10 +19,25 @@ class CommentController extends Controller
         $comment = Comment::create([
             'topic_id' => $topicId,
             'content' => $request->content,
-            'comment_by' => $request->input('comment_by', 'anonymous'),
+            'user_id' => auth()->id(),
+            'comment_by' => auth()->check() ? auth()->user()->name : 'anonymous',
         ]);
 
         Log::info('Comment added', ['topic_id' => $topicId, 'by' => $comment->comment_by]);
+
+        return back();
+    }
+    public function destroy($id)
+    {
+        $comment = Comment::findOrFail($id);
+
+        if (auth()->id() !== $comment->user_id) {
+            abort(403);
+        }
+
+        $comment->delete();
+
+        Log::info('Comment deleted', ['comment_id' => $id, 'by' => auth()->user()->name ?? 'anonymous']);
 
         return back();
     }

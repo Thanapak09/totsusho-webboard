@@ -6,17 +6,24 @@
 <h3>{{ $topic->title }}</h3>
 <p class="mb-4">{{ $topic->content }}</p>
 
-<h5>Comments ({{ $topic->comments->count() }})</h5>
-
 @forelse ($topic->comments as $comment)
     <div class="border p-3 mb-3 rounded bg-light">
-        <strong>{{ $comment->comment_by ?? 'anonymous' }}</strong>
+        <strong>{{ $comment->user->name ?? 'anonymous' }}</strong>
         <span class="text-muted">{{ $comment->created_at->format('d M Y H:i') }}</span>
         <p>{{ $comment->content }}</p>
+
+        @if(auth()->check() && auth()->id() === $comment->user_id)
+            <form action="{{ route('comments.destroy', $comment->id) }}" method="POST" class="d-inline">
+                @csrf
+                @method('DELETE')
+                <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+            </form>
+        @endif
     </div>
 @empty
     <p>No comments yet.</p>
 @endforelse
+
 
 <hr>
 
