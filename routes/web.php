@@ -4,26 +4,38 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TopicController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\DashboardController;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [TopicController::class, 'index'])->name('topics.index');
 
-Route::get('/',[TopicController::class,'index'])->name('topics.index');
-Route::get('/topics/create',[TopicController::class,'create'])->name('topics.create');
-Route::post('/topic',[TopicController::class,'store'])->name('topics.store');
-Route::get('/topic/{id}',[TopicController::class,'show'])->name('topics.show');
-Route::post('/topic/{id}/comment',[CommentController::class,'store'])->name('commments.store');
-Route::delete('/comment/{id}', [CommentController::class, 'destroy'])->name('comments.destroy');
+// Dashboard (Requires authentication + verified)
+Route::get('/dashboard', fn() => redirect()->route('topics.index'))
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    
+    // Topic Routes
+    Route::prefix('topics')->name('topics.')->group(function () {
+        Route::get('/', [TopicController::class, 'index'])->name('index');
+        Route::get('/create', [TopicController::class, 'create'])->name('create');
+        Route::post('/', [TopicController::class, 'store'])->name('store');
+        Route::get('/{id}', [TopicController::class, 'show'])->name('show');
+    });
+
+    // Comment Routes
+    Route::prefix('comments')->name('comments.')->group(function () {
+        Route::post('/{topic}', [CommentController::class, 'store'])->name('store');
+        Route::delete('/{comment}', [CommentController::class, 'destroy'])->name('destroy');
+    });
+
+    // Profile Routes
+    Route::prefix('profile')->name('profile.')->group(function () {
+        Route::get('/', [ProfileController::class, 'edit'])->name('edit');
+        Route::patch('/', [ProfileController::class, 'update'])->name('update');
+        Route::delete('/', [ProfileController::class, 'destroy'])->name('destroy');
+    });
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

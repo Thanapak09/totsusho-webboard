@@ -12,8 +12,8 @@ class TopicController extends Controller
     // 
     public function index()
     {
-        $topics = Topic::latest()->withCount('comments')->get();
-
+        $topics = Topic::withCount('comments')->with('comments')->latest()->get();
+        // dd($topics);
         Log::info('Viewed topic list');
 
         return view('topics.index', compact('topics'));

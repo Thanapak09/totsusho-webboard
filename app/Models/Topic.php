@@ -13,6 +13,7 @@ class Topic extends Model
         'title',
         'content',
         'created_by',
+        'user_id',
     ];
 
     /**

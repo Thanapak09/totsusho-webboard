@@ -1,3 +1,14 @@
 @tailwind base;
+@layer base {
+  /* Make every <button> transparent by default */
+  button {
+    @apply bg-transparent;
+  }
+}
+@layer components {
+    .btn-transparent {
+      @apply bg-transparent hover:bg-gray-100;
+    }
+  }
 @tailwind components;
 @tailwind utilities;

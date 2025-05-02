@@ -13,6 +13,7 @@ class Comment extends Model
         'topic_id',
         'content',
         'comment_by',
+        'user_id',
     ];
 
     /**
